@@ -3,19 +3,22 @@ var router = express.Router()
 
 // define the about route
 router.get('/', function (req, res) {
-  res.render('page', {
+  res.render('teach', {
     title:'teach', 
-    message:'teach'
+    message:'teach',
+    footer:'update 2019-08-01',
   });
 })
 
 // define the about route
-router.get('/about', function (req, res) {
-  res.render('page', {
-    title:'teach/about', 
-    message:'teach about'
+router.get('/c', function (req, res) {
+  res.render('teach', {
+    title:'teach/c', 
+    message:'teach some c to students',
+    footer:'update 2019-08-01',
   });
 })
+
 
 module.exports = router
 
