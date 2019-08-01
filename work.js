@@ -11,7 +11,8 @@ router.use(function timeLog (req, res, next) {
 router.get('/', function (req, res) {
   res.render('page', {
     title:'work', 
-    message:'blub'
+    message:'blub',
+    footer:'footer',
   });
 })
 

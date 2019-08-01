@@ -11,9 +11,8 @@ app.set('view engine', 'pug');
 app.get('/', function (req, res) {
   res.render('index', {
     title:'station.codes', 
-    message:'station.codes stuff',
+    message:'station.codes',
     text:'some text',
-    worklink:'<a href="/work">work</a>',
     footer:'the footer',
   });
 });

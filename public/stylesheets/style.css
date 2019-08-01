@@ -1,0 +1,28 @@
+body {
+  padding: 500px;
+  background-color : rgba(87, 87, 87, 0.61);
+  font: 8px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  letter-spacing: 10px;
+  color: orange;
+}
+
+b {
+  text-decoration: overline;
+  color: rgba(0, 0, 128, 0.363);
+}
+
+c {
+  color: green;  
+}
+
+d {
+  color: grey;
+  text-decoration: underline;
+}
+
+
+
+
