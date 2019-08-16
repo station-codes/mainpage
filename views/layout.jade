@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    title #{title} - duchonic
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    header
+      h1 duchonic
+      a(href='/') home
+      |  / 
+      a(href='/work') work
+      |  / 
+      a(href='/learn') learn
+      |  / 
+      a(href='/teach') teach
+      |  / 
+      a(href='/sail') sail
+      |  / 
+      a(href='game') game
+    .container
+      .main-content
+        block content
+      .sidebar
+        block sidebar
+    footer
+    h5= footer
