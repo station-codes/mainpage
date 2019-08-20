@@ -7,7 +7,7 @@ router.get('/', function (req, res) {
     title:'teach', 
     message:'teach',
     footer:'update 2019-08-01',
-  });
+  })
 })
 
 // define the about route
@@ -16,7 +16,7 @@ router.get('/c', function (req, res) {
     title:'teach/c', 
     message:'teach some c to students',
     footer:'update 2019-08-01',
-  });
+  })
 })
 
 

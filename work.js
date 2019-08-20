@@ -9,20 +9,20 @@ var router = express.Router()
 
 // define the about route
 router.get('/', function (req, res) {
-  res.render('page', {
+  res.render('work', {
     title:'work', 
     message:'work i have done as a software engeneer',
     text:'blub',
     footer:'update 2019-08-01',
-  });
+  })
 })
 
 // define the about route
 router.get('/about', function (req, res) {
-  res.render('page', {
+  res.render('work', {
     title:'work/about', 
     message:'copirights and so on...'
-  });
+  })
 })
 
 module.exports = router
