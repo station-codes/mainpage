@@ -7,15 +7,17 @@ router.get('/', function (req, res) {
     title:'teach', 
     message:'teach',
     footer:'update 2019-08-01',
+    testFile:"blub",
   })
 })
 
 // define the about route
-router.get('/c', function (req, res) {
+router.get('/test', function (req, res) {
   res.render('teach', {
-    title:'teach/c', 
-    message:'teach some c to students',
+    title:'teach', 
+    message:'teach',
     footer:'update 2019-08-01',
+    testFile:"this workds",
   })
 })
 

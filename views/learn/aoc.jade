@@ -1,0 +1,26 @@
+extend ../layout
+
+block content
+
+  h4 info: #{data.filename}
+  h4 info: #{data.day}
+
+  -var name = '../../public/docs/day0' + data.day + '.md'
+  h4 filename: #{name}
+
+  if data.day == 1
+    include:markdown ../../public/docs/day01.md
+  else if data.day == 2
+    include:markdown ../../public/docs/day02.md
+  else
+    h4 nothing to show
+
+  a(href="/learn")  <<<
+
+block sidebar
+  .widget
+    h1 personal
+    p info: #{info}
+    p.
+      station <br>
+      8874 Muhlehorn

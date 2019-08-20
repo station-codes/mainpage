@@ -1,0 +1,282 @@
+extend ../layout
+
+block content
+  p
+    | stm IoT testdevice
+
+  :markdown
+    # Markdown
+
+    # wifi server
+
+    ```cpp
+    #include "mbed.h"
+    #include "wifi.h"
+    #include "rtos.h"
+    ```
+
+    ```cpp
+    
+    /* Private defines -----------------------------------------------------------*/
+    #define WIFI_WRITE_TIMEOUT  10000
+    #define WIFI_READ_TIMEOUT   10000
+    #define PORT                80
+
+    /* Private typedef------------------------------------------------------------*/
+    typedef enum
+    {
+      WS_IDLE = 0,
+      WS_CONNECTED,
+      WS_DISCONNECTED,
+      WS_ERROR,
+    } WebServerState_t;
+
+    /* Private macro -------------------------------------------------------------*/
+    static int wifi_sample_run(void);
+    static void WebServerProcess(void);
+    static WIFI_Status_t SendWebPage(uint8_t ledIsOn, float temperature);
+    /* Private variables ---------------------------------------------------------*/
+
+    uint16_t respLen;
+    uint8_t  IP_Addr[4]; 
+    uint8_t  MAC_Addr[6]; 
+    int32_t  Socket = -1;
+    static   WebServerState_t  State = WS_ERROR;
+    char     ModuleName[32];
+
+    DigitalOut led(LED2);
+    AnalogIn adc_temp(ADC_TEMP);
+
+    void server_task(void const *) {
+        int ret = 0;
+        led = 0;
+
+        printf("************************************************************\n");
+        printf("***   STM32 IoT Discovery kit for STM32L475 MCU          ***\n");
+        printf("***         WIFI Web Server demonstration                ***\n");
+        printf("************************************************************\n");
+        
+        /* Working application */
+        ret = wifi_sample_run();
+        
+        if (ret == 0) {
+            while(1) {
+                WebServerProcess ();
+                Thread::wait(1);
+            }
+        }
+        printf("process end");
+    }
+
+    int wifi_sample_run(void)
+    {
+      
+        /*Initialize and use WIFI module */
+        if(WIFI_Init() ==  WIFI_STATUS_OK) {
+            printf("WIFI Initialized.\n");
+        
+            if(WIFI_GetMAC_Address(MAC_Addr) == WIFI_STATUS_OK) {       
+                printf("> wifi module MAC Address : %X:%X:%X:%X:%X:%X\n",     
+                      MAC_Addr[0],
+                      MAC_Addr[1],
+                      MAC_Addr[2],
+                      MAC_Addr[3],
+                      MAC_Addr[4],
+                      MAC_Addr[5]);   
+            } else {
+                printf("> ERROR : CANNOT get MAC address\n");
+            }
+        
+            //if( WIFI_Connect("nur-41416", "5j5b-xxx-keew", WIFI_ECN_WPA2_PSK) == WIFI_STATUS_OK) {
+            if (WIFI_Connect("daycrunchLQ", "wurxxte", WIFI_ECN_WPA2_PSK) == WIFI_STATUS_OK){
+                printf("> wifi module connected \n");
+          
+                if(WIFI_GetIP_Address(IP_Addr) == WIFI_STATUS_OK) {
+                    printf("> wifi module got IP Address : %d.%d.%d.%d\n",     
+                          IP_Addr[0],
+                          IP_Addr[1],
+                          IP_Addr[2],
+                          IP_Addr[3]); 
+            
+                    printf(">Start HTTP Server... \n");
+                    printLine("http server", FIRST_LINE);
+                    printf(">Wait for connection...  \n");
+                    State = WS_IDLE;
+                } else {    
+                    printf("> ERROR : wifi module CANNOT get IP address\n");
+                    return -1;
+                }
+            } else {
+                printf("> ERROR : wifi module NOT connected\n");
+                return -1;
+            }
+        } else {
+            printf("> ERROR : WIFI Module cannot be initialized.\n"); 
+            return -1;
+        }
+        return 0;
+    }
+
+    /**
+      * @brief  Send HTML page
+      * @param  None
+      * @retval None
+      */
+    static void WebServerProcess(void)
+    {
+        uint8_t resp[1024];
+        uint8_t LedState = 0;
+        float temp;
+        switch(State)
+        {
+            case WS_IDLE:{
+                Socket = 0;
+                WIFI_StartServer(Socket, WIFI_TCP_PROTOCOL, "", PORT);
+                
+                if(Socket != -1)
+                {
+                  printf("> HTTP Server Started \n");  
+                  State = WS_CONNECTED;
+                }
+                else
+                {
+                  printf("> ERROR : Connection cannot be established.\n"); 
+                  State = WS_ERROR;
+                }    
+                break;
+            }
+            case WS_CONNECTED:{
+            
+                WIFI_ReceiveData(Socket, resp, 1200, &respLen, WIFI_READ_TIMEOUT);
+                
+                if( respLen > 0)
+                {
+                  if(strstr((char *)resp, "GET")) /* GET: put web page */
+                  {
+                    printf("get\n");
+                    temp = (adc_temp.read()*100);
+                    if(SendWebPage(LedState, temp) != WIFI_STATUS_OK)
+                    {
+                      printf("> ERROR : Cannot send web page\n");
+                      State = WS_ERROR;
+                    }
+                    else
+                    {
+                        State = WS_IDLE;
+                    }
+                  }
+                  else if(strstr((char *)resp, "POST"))/* POST: received info */
+                  {
+                      printf("post\n");
+                      if(strstr((char *)resp, "radio"))
+                      {          
+                        if(strstr((char *)resp, "radio=0"))
+                        {
+                          LedState = 0;
+                          led = 0;
+                        }
+                        else if(strstr((char *)resp, "radio=1"))
+                        {
+                          LedState = 1;
+                          led = 1;
+                        } 
+                        
+                      temp = (adc_temp.read()*100);
+                        if(SendWebPage(LedState, temp) != WIFI_STATUS_OK)
+                        {
+                          printf("> ERROR : Cannot send web page\n");
+                          State = WS_ERROR;
+                      }
+                    }
+                  }
+                  else{
+                    printf("unknown\n");
+                  }
+                }
+                
+                if(WIFI_StopServer(Socket) == WIFI_STATUS_OK)
+                {
+                  WIFI_StartServer(Socket, WIFI_TCP_PROTOCOL, "", PORT);
+                }
+                else
+                {
+                  State = WS_ERROR;  
+                  printf("some error\n");
+                }
+                break;
+            }
+            case WS_ERROR:   
+            default:{
+                printf("error\n");
+                break;
+            }
+        }
+    }
+
+
+    /**
+      * @brief  Send HTML page
+      * @param  None
+      * @retval None
+      */
+    static WIFI_Status_t SendWebPage(uint8_t ledIsOn, float temperature)
+    {
+        uint8_t http[1024];
+        uint8_t pause[50];
+        uint8_t cycles[50];
+        uint8_t  temp[50];
+        uint16_t SentDataLength;
+        WIFI_Status_t ret;
+        
+        /* construct web page content */
+        strcpy((char *)http, (char *)"HTTP/1.0 200 OK\r\nContent-Type: text/html\r\nPragma: no-cache\r\n\r\n");
+        strcat((char *)http, (char *)"<html>\r\n<body>\r\n");
+        strcat((char *)http, (char *)"<title>STM32 Web Server</title>\r\n");
+        strcat((char *)http, (char *)"<h2>Web Server</h2>\r\n");
+        strcat((char *)http, (char *)"<br /><hr>\r\n");  
+        
+        #ifdef BLUB
+        sprintf((char *)pause, "<h2>config: %s </h2>\r\n" "", getPause().c_str());
+        strcat((char *)http, (char *)pause);
+        sprintf((char *)cycles, "<h2>config: %s </h2>\r\n" "", getCycles().c_str());
+        strcat((char *)http, (char *)cycles);
+        strcat((char *)http, (char *)"<br /><hr>\r\n");  
+        strcat((char *)http, (char *)"<p><form method=\"POST\"><strong>Temp: <input type=\"text\" size=2 value=\"");
+        sprintf((char *)temp, "%f", temperature);
+        strcat((char *)http, (char *)temp);
+        strcat((char *)http, (char *)"\"> <sup>O</sup>C");
+        
+        if (ledIsOn) {
+            strcat((char *)http, (char *)"<p><input type=\"radio\" name=\"radio\" value=\"0\" >LED off");
+            strcat((char *)http, (char *)"<br><input type=\"radio\" name=\"radio\" value=\"1\" checked>LED on");
+        } else {
+            strcat((char *)http, (char *)"<p><input type=\"radio\" name=\"radio\" value=\"0\" checked>LED off");
+            strcat((char *)http, (char *)"<br><input type=\"radio\" name=\"radio\" value=\"1\" >LED on");
+        }
+        #endif
+        
+        strcat((char *)http, (char *)"</strong><p><input type=\"submit\"></form></span>");
+        strcat((char *)http, (char *)"</body>\r\n</html>\r\n");
+        
+        ret = WIFI_SendData(0, (uint8_t *)http, strlen((char *)http), &SentDataLength, WIFI_WRITE_TIMEOUT); 
+        
+        if((ret == WIFI_STATUS_OK) && (SentDataLength != strlen((char *)http)))
+        {
+        ret = WIFI_STATUS_ERROR;
+        }
+        
+      return ret;
+    }
+
+    ```
+    
+block sidebar
+  .widget
+    h1 personal
+    p
+      | station <br>
+      | 8874 Muhlehorn
+    
+    p
+      | stm stuff
+

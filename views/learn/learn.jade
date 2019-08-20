@@ -1,0 +1,30 @@
+extend ../layout
+
+block content
+
+  p info: #{info}
+
+  h4 stm (mbed) stuff
+  a(href="/learn/stm") stm
+
+  h4 aoc stuff
+  a(href="/learn/aoc/2019/01") 2019 day01
+  br
+  a(href="/learn/aoc/2019/02") 2019 day02
+  br
+  a(href="/learn/aoc/2019/03") 2019 day03
+
+  h4 meetup stuff
+  a(href="https://www.meetup.com/") open zurick
+  br
+  a(href="https://www.meetup.com/") gnu linux
+  br
+  a(href="https://www.meetups.com") agile blub
+
+block sidebar
+  .widget
+    h1 personal
+    p info: #{info}
+    p.
+      station <br>
+      8874 Muhlehorn

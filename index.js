@@ -1,7 +1,6 @@
 var express = require('express')
 var stylus = require('stylus')
 var nib = require('nib')
-
 var app = express();
 
 var work = require('./work.js')
@@ -16,9 +15,10 @@ app.use(express.static(__dirname + '/public'))
 app.get('/', function (req, res) {
   res.render('index', {
     title:'station.codes', 
-    message:'',
-    text:'my metrics',
-    footer:'last update 2019-08-01',
+    //footer:'last update 2019-08-01',
+    name: {
+      first:'n', 
+      second:'du'}, 
   })
 })
 

@@ -5,8 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "express": "^4.17.1",
+    "highlight": "^0.2.4",
     "jade": "^1.11.0",
+    "markdown-js": "0.0.4",
     "nib": "^1.1.2",
+    "npm": "^6.10.3",
     "stylus": "^0.54.5"
   },
   "devDependencies": {},

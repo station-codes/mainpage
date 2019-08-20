@@ -1,13 +1,5 @@
-# title of day01.md
+# title of day02.md
 
-* a point
-* a second point
-
-```python
-freq = 0
-actline = 0
-freqArr = dict()
-```
 
 ```python
 for i in range(200):
