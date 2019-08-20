@@ -9,8 +9,17 @@ var teach = require('./teach.js')
 var game = require('./game.js')
 var sail = require('./sail')
 
+/* dont use jade anymore, pug is the new name */
 app.set('view engine', 'jade')
+//app.set('view engine', 'pug')
+
 app.use(express.static(__dirname + '/public'))
+
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  console.log("app req, res, next")
+  next();
+});
 
 app.get('/', function (req, res) {
   res.render('index', {

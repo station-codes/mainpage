@@ -1,25 +1,25 @@
 extend ../layout
 
 block content
-
-  p info: #{info}
-
+  br
   h4 stm (mbed) stuff
+  h1 some stuff done with stm board
   a(href="/learn/stm") stm
-
+  
+  br
   h4 aoc stuff
-  a(href="/learn/aoc/2019/01") 2019 day01
-  br
-  a(href="/learn/aoc/2019/02") 2019 day02
-  br
-  a(href="/learn/aoc/2019/03") 2019 day03
+  h1 advent of code challenges. Solved with python, ipython notebook and cpp  
+  for year in aocYears
+    a(href="/learn/aoc/" + "#{year}") #{year} 
+    br
 
+  br
   h4 meetup stuff
-  a(href="https://www.meetup.com/") open zurick
+  a(href="https://www.meetup.com/de-DE/opentechschool-zurich/" target="_blank") OpenTechSchool Zurich
   br
-  a(href="https://www.meetup.com/") gnu linux
+  a(href="https://www.meetup.com/de-DE/Embedded-GNU-Linux-Developer/" target="_blank") Embedded GNU/Linux Entwickler
   br
-  a(href="https://www.meetups.com") agile blub
+  a(href="https://www.meetup.com/de-DE/Agile-Breakfast-St-Gallen/" target="_blank") Agile Breakfast St. Gallen von swissICT
 
 block sidebar
   .widget

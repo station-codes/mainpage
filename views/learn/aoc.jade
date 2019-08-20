@@ -1,12 +1,7 @@
 extend ../layout
 
 block content
-
-  h4 info: #{data.filename}
-  h4 info: #{data.day}
-
-  -var name = '../../public/docs/day0' + data.day + '.md'
-  h4 filename: #{name}
+  //-var name = '../../public/docs/day0' + data.day + '.md'
 
   if data.day == 1
     include:markdown ../../public/docs/day01.md

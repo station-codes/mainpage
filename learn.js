@@ -8,39 +8,18 @@ router.get('/', function (req, res) {
     title:'learn', 
     footer:'update 2019-08-01',
     info:"learning stuff",
+    aocYears:["2019", "2018", "2017"],
   })
 })
 
 
-router.get("/aoc/2019/01", function(req, res ){
+router.get("/aoc/20*", function(req, res ){
   res.render('learn/aoc', {
     title:'aoc',
     footer:'update 2019-08-11',
     data:{
       filename:"day01.md",
       day:1
-    },
-  })
-})
-
-router.get("/aoc/2019/02", function(req, res ){
-  res.render('learn/aoc', {
-    title:'aoc',
-    footer:'update 2019-08-11',
-    data:{
-      filename:"day02.md",
-      day:2
-    },
-  })
-})
-
-router.get("/aoc/2019/03", function(req, res ){
-  res.render('learn/aoc', {
-    title:'aoc',
-    footer:'update 2019-08-11',
-    data:{
-      filename:"day03.md",
-      day:3
     },
   })
 })
